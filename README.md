@@ -56,6 +56,8 @@ Docs interactivas: `http://localhost:8000/docs`
 
 ## Deploy en Render
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/youcefyakhoo/dramalive-api)
+
 1. Render → *New +* → *Blueprint* → conecta este repo.
 2. `render.yaml` ya define: build `pip install -r requirements.txt`,
    start `uvicorn server:app --host 0.0.0.0 --port $PORT`,

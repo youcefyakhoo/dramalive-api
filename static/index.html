@@ -3,313 +3,151 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Drama Live</title>
+<title>Drama Live ? Player</title>
 <style>
-  :root{
-    --fondo:#0b1220; --panel:#131c2e; --panel2:#1a2540; --linea:#243252;
-    --texto:#e8eefc; --tenue:#8ea0c4; --ok:#22c55e; --mal:#ef4444; --acento:#4f8cff;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--fondo);color:var(--texto);
-       font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  button{font:inherit;cursor:pointer;border:0}
-  .cab{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;
-       padding:10px 12px;background:#0e1729ee;backdrop-filter:blur(8px);
-       border-bottom:1px solid var(--linea)}
-  .cab h1{font-size:16px;margin:0;flex:1;font-weight:650}
-  .cab input{width:104px;padding:8px 10px;border-radius:9px;border:1px solid var(--linea);
-       background:var(--panel);color:var(--texto);font-size:14px}
-  .cab button{padding:8px 13px;border-radius:9px;background:var(--acento);color:#fff;font-weight:600}
-  .barra{display:flex;gap:7px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--linea);
-         scrollbar-width:none}
-  .barra::-webkit-scrollbar{display:none}
-  .chip{white-space:nowrap;padding:7px 13px;border-radius:999px;background:var(--panel);
-        color:var(--tenue);border:1px solid var(--linea);font-size:13px}
-  .chip.on{background:var(--acento);color:#fff;border-color:var(--acento)}
-  .estado{padding:6px 12px;color:var(--tenue);font-size:13px}
-  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
-           gap:8px;padding:10px 12px 90px}
-  .tarj{display:flex;gap:9px;align-items:center;padding:8px;border-radius:11px;
-        background:var(--panel);border:1px solid var(--linea);text-align:left;color:var(--texto)}
-  .tarj:hover{border-color:var(--acento)}
-  .tarj img{width:38px;height:38px;border-radius:7px;object-fit:contain;background:#0d1526}
-  .tarj span{font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
-             -webkit-box-orient:vertical}
-  /* ---- reproductor ---- */
-  #ver{position:fixed;inset:0;background:var(--fondo);display:none;flex-direction:column;z-index:50}
-  #ver.on{display:flex}
-  .v-cab{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--linea)}
-  .v-cab button{background:var(--panel2);color:var(--texto);padding:7px 12px;border-radius:9px}
-  .v-cab h2{font-size:15px;margin:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .marco{position:relative;width:100%;background:#000;aspect-ratio:16/9}
-  .marco video{width:100%;height:100%;background:#000;display:block}
-  .aviso{position:absolute;inset:0;display:flex;flex-direction:column;gap:8px;
-         align-items:center;justify-content:center;color:#cbd6ec;font-size:14px;
-         background:#000000cc;text-align:center;padding:16px}
-  .aviso b{font-size:15px}
-  .ops{padding:10px 12px 30px;overflow:auto;flex:1}
-  .ops h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--tenue);margin:14px 0 7px}
-  .fila{display:flex;gap:9px;align-items:center;padding:9px;margin-bottom:7px;
-        border-radius:10px;background:var(--panel);border:1px solid var(--linea)}
-  .fila.act{border-color:var(--acento);background:#16233c}
-  .punto{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
-  .ok{background:var(--ok)} .mal{background:var(--mal)}
-  .fila .info{flex:1;min-width:0}
-  .fila .t{font-size:13.5px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-  .fila .u{font-size:11.5px;color:var(--tenue);overflow:hidden;text-overflow:ellipsis;
-           white-space:nowrap;margin-top:2px}
-  .etq{font-size:10.5px;padding:1px 7px;border-radius:999px;background:var(--panel2);
-       color:var(--tenue);border:1px solid var(--linea);text-transform:uppercase;letter-spacing:.03em}
-  .fila button{padding:7px 12px;border-radius:8px;background:var(--acento);color:#fff;font-size:13px;font-weight:600}
-  .fila button:disabled{background:var(--panel2);color:var(--tenue);cursor:not-allowed}
+:root{--bg:#070b14;--card:rgba(18,27,46,.78);--line:rgba(140,170,235,.16);--txt:#eef3ff;--mut:#93a3c4;--acc:#5b8cff;--acc2:#a35cff;--ok:#2ee6a8;--bad:#ff5d73;--shadow:0 18px 50px rgba(0,0,0,.45)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+button,input{font:inherit}
+button{cursor:pointer;border:0;color:inherit}
+body{margin:0;min-height:100vh;color:var(--txt);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(1200px 600px at 12% -10%,rgba(91,140,255,.22),transparent 60%),radial-gradient(900px 500px at 100% 0%,rgba(163,92,255,.16),transparent 55%),var(--bg)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.32;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,#000,transparent 70%)}
+.app{position:relative;max-width:1440px;margin:0 auto;padding:18px 18px 60px}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:12px 16px;border:1px solid var(--line);border-radius:18px;background:rgba(9,15,28,.82);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 24px rgba(91,140,255,.4)}
+.logo::after{content:"?";font-size:16px;transform:translateX(1px)}
+.brand h1{margin:0;font-size:19px;letter-spacing:.2px;background:linear-gradient(90deg,#fff,#9fc0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{margin:1px 0 0;color:var(--mut);font-size:12px}
+.codebox{display:flex;align-items:flex-end;gap:8px}
+.codebox label{display:block;font-size:10px;letter-spacing:.12em;color:var(--mut);margin-bottom:4px}
+.codebox input{width:120px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:#0b1222;color:var(--txt);outline:none;transition:.2s}
+.codebox input:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(91,140,255,.18)}
+.btn{padding:10px 16px;border-radius:11px;font-weight:650;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 22px rgba(91,140,255,.28);transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 12px}
+.seg{display:flex;padding:4px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.seg button{padding:7px 18px;border-radius:9px;background:transparent;color:var(--mut);font-weight:600}
+.seg button.on{background:linear-gradient(135deg,rgba(91,140,255,.95),rgba(163,92,255,.95));color:#fff;box-shadow:0 6px 16px rgba(91,140,255,.25)}
+.buscar{position:relative;flex:1;min-width:180px}
+.buscar input{width:100%;padding:10px 14px 10px 34px;border-radius:12px;border:1px solid var(--line);background:rgba(11,18,34,.8);color:var(--txt);outline:none}
+.buscar::before{content:"?";position:absolute;left:12px;top:7px;color:var(--mut);font-size:18px}
+.estado{padding:9px 13px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--mut);font-size:12px;white-space:nowrap}
+.temas{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:none}
+.temas::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:var(--mut);font-size:12px;white-space:nowrap;transition:.18s}
+.chip:hover{color:#fff;border-color:rgba(91,140,255,.5);transform:translateY(-1px)}
+.chip.on{background:linear-gradient(135deg,rgba(91,140,255,.95),rgba(163,92,255,.95));color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(91,140,255,.28)}
+.rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:14px}
+.tarj{position:relative;padding:0;border-radius:15px;overflow:hidden;text-align:left;background:var(--card);border:1px solid var(--line);transition:transform .18s,border-color .18s,box-shadow .18s;animation:subir .35s both}
+.tarj:hover{transform:translateY(-4px);border-color:rgba(91,140,255,.55);box-shadow:0 16px 34px rgba(0,0,0,.42)}
+.tarj .thumb{position:relative;aspect-ratio:16/9;background:#0a1020;overflow:hidden}
+.tarj img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9;transition:transform .35s,opacity .2s}
+.tarj:hover img{transform:scale(1.06);opacity:1}
+.tarj .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(5,9,18,.85),transparent 60%)}
+.tarj .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.8);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);opacity:0;transition:.2s;z-index:2}
+.tarj .play::after{content:"?";font-size:12px;transform:translateX(1px)}
+.tarj:hover .play{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.tarj .num{position:absolute;left:8px;top:8px;z-index:2;padding:2px 7px;border-radius:7px;background:rgba(5,9,18,.7);font-size:10px;color:var(--mut)}
+.tarj .nom{padding:10px 11px 12px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tarj .vivo{position:absolute;right:8px;top:8px;z-index:2;padding:2px 7px;border-radius:7px;background:rgba(46,230,168,.16);border:1px solid rgba(46,230,168,.4);color:var(--ok);font-size:9px;font-weight:800;letter-spacing:.08em}
+@keyframes subir{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hueso{aspect-ratio:16/9;border-radius:15px;background:linear-gradient(100deg,rgba(255,255,255,.03) 20%,rgba(255,255,255,.09) 40%,rgba(255,255,255,.03) 60%);background-size:200% 100%;animation:brillo 1.3s infinite}
+@keyframes brillo{to{background-position:-200% 0}}
+#ver{position:fixed;inset:0;z-index:60;display:none;overflow:auto;background:rgba(4,7,14,.78);backdrop-filter:blur(14px);padding:18px}
+#ver.on{display:block}
+.player{max-width:1480px;margin:0 auto}
+.phead{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(11,18,34,.9);box-shadow:var(--shadow);margin-bottom:14px}
+.phead .txt{flex:1;min-width:0}
+.phead h2{margin:0;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.phead p{margin:2px 0 0;color:var(--mut);font-size:12px}
+.icono{padding:10px 13px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-weight:600}
+.icono:hover{background:rgba(255,255,255,.1)}
+.pbody{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:14px;align-items:start}
+@media(max-width:1020px){.pbody{grid-template-columns:1fr}}
+.escena{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#04070d;box-shadow:var(--shadow)}
+.marco{position:relative;aspect-ratio:16/9;background:#000}
+.marco video{width:100%;height:100%;display:block;object-fit:contain;background:#000}
+.aviso{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:20px;background:rgba(4,7,14,.58);backdrop-filter:blur(4px)}
+.aviso b{font-size:16px}
+.aviso span{color:var(--mut);font-size:12px;max-width:420px}
+.pie{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 14px;border-top:1px solid var(--line);background:rgba(11,18,34,.85);font-size:12px;color:var(--mut)}
+.pie b{color:var(--txt)}
+.srv{border:1px solid var(--line);border-radius:18px;background:rgba(11,18,34,.9);box-shadow:var(--shadow);overflow:hidden;position:sticky;top:18px}
+.shead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,rgba(91,140,255,.1),transparent)}
+.shead h3{margin:0;font-size:15px}
+.shead p{margin:2px 0 0;color:var(--mut);font-size:11px}
+.sw{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mut);white-space:nowrap}
+.sw input{accent-color:var(--acc)}
+.lista{max-height:calc(100vh - 210px);overflow:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.lista::-webkit-scrollbar{width:7px}
+.lista::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:9px}
+.op{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.035);transition:.18s}
+.op:hover{background:rgba(255,255,255,.07);border-color:rgba(91,140,255,.4)}
+.op.act{border-color:var(--acc);background:linear-gradient(135deg,rgba(91,140,255,.14),rgba(163,92,255,.08));box-shadow:inset 3px 0 0 var(--acc)}
+.op .n{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(255,255,255,.07);font-size:11px;font-weight:800;color:var(--mut)}
+.op.act .n{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff}
+.op .meta{min-width:0}
+.op .linea{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.op .tipo{font-weight:700;font-size:12px}
+.etq{padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.08);font-size:9px;font-weight:700;letter-spacing:.04em;color:var(--mut)}
+.etq.hls{background:rgba(91,140,255,.16);color:#9fc0ff}
+.etq.http{background:rgba(46,230,168,.12);color:var(--ok)}
+.op .url{margin-top:3px;color:var(--mut);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr}
+.op .det{margin-top:2px;font-size:10px;color:var(--mut)}
+.punto{width:7px;height:7px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.punto.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.punto.mal{background:var(--bad)}
+.ver{padding:7px 11px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:11px;font-weight:700;white-space:nowrap}
+.ver:hover,.op.act .ver{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff}
+.vacio{padding:36px 14px;text-align:center;color:var(--mut)}
+.copiar{padding:5px 7px;border-radius:7px;background:transparent;border:1px solid var(--line);font-size:9px;color:var(--mut)}
+.copiar:hover{color:#fff;border-color:var(--acc)}
+@media(max-width:640px){.app{padding:12px 12px 40px}.topbar{flex-wrap:wrap}.codebox{flex:1}.codebox input{width:100%}.rejilla{grid-template-columns:repeat(auto-fill,minmax(128px,1fr))}.phead{flex-wrap:wrap}.srv{position:static}.lista{max-height:none}}
 </style>
 </head>
 <body>
-
-<header class="cab">
-  <h1>Drama Live</h1>
-  <input id="cod" value="232425" inputmode="numeric" aria-label="código FG">
-  <button id="ir">Abrir</button>
-</header>
-<div class="barra" id="modos" style="border-bottom:0;padding-bottom:0">
-  <button class="chip on" data-tipo="tv">TV</button>
-  <button class="chip" data-tipo="radio">Radio</button>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo"></div><div><h1>Drama Live</h1><p>Playlist FG ? <span id="codeLabel">232425</span> ? <span id="modoLabel">TV</span></p></div></div>
+    <div class="codebox"><div><label for="cod">C?DIGO FG</label><input id="cod" value="232425" inputmode="numeric" autocomplete="off"></div><button class="btn" id="ir">Abrir</button></div>
+  </header>
+  <div class="toolbar">
+    <div class="seg" id="modos"><button class="on" data-tipo="tv">TV</button><button data-tipo="radio">Radio</button></div>
+    <div class="buscar"><input id="buscar" placeholder="Buscar canal por nombre?" autocomplete="off"></div>
+    <div class="estado" id="estado">Preparando?</div>
+  </div>
+  <nav class="temas" id="temas"></nav>
+  <main class="rejilla" id="canales"></main>
 </div>
-<div class="barra" id="temas"></div>
-<div class="estado" id="estado">Escribe un código FG y pulsa Abrir.</div>
-<div class="rejilla" id="canales"></div>
-
-<section id="ver">
-  <div class="v-cab">
-    <button id="volver">← Volver</button>
-    <h2 id="titulo"></h2>
-    <button id="rehacer">Re-probar</button>
+<section id="ver"><div class="player">
+  <div class="phead"><button class="icono" id="volver">? Volver</button><div class="txt"><h2 id="titulo">Canal</h2><p id="subtitulo">Cargando servidores?</p></div><button class="icono" id="rehacer">? Re-probar</button></div>
+  <div class="pbody">
+    <div class="escena"><div class="marco" id="marco"><video id="vid" controls playsinline></video><div class="aviso" id="aviso"><b>Conectando?</b></div></div><div class="pie"><span id="estadoVideo">Sin conexi?n</span><label class="sw"><input type="checkbox" id="autoSalto" checked> Saltar a otro servidor si falla</label></div></div>
+    <aside class="srv"><div class="shead"><div><h3>Servidores disponibles</h3><p id="resumenOps">?</p></div><label class="sw"><input type="checkbox" id="soloEmite"> Solo emitiendo</label></div><div class="lista" id="listaOps"></div></aside>
   </div>
-  <div class="marco">
-    <video id="vid" controls playsinline></video>
-    <div class="aviso" id="aviso"><b>Elige una opción</b><span>Abajo están todas las de este canal.</span></div>
-  </div>
-  <div class="ops" id="lista-ops"></div>
-</section>
-
+</div></section>
 <script src="/static/hls.min.js"></script>
 <script>
-const $ = s => document.querySelector(s);
-let codigo = '232425', temaActual = null, tipoActual = 'tv';
-let hls = null, canalAbierto = null;
-/* Si la web se sirve desde otro dominio (ej. Cloudflare Pages), aquí se pone
-   la URL base de la API Python (sin barra final). Vacío = mismo origen. */
 const API_BASE = window.API_BASE || 'https://dramalive-api-08th.onrender.com';
-
-/* ---------- utilidades ---------- */
-async function api(ruta){
-  const r = await fetch(API_BASE + ruta);
-  if(!r.ok){ throw new Error((await r.text()).slice(0,160) || ('HTTP '+r.status)); }
-  return r.json();
-}
-function pintarEstado(t){ $('#estado').textContent = t; }
-function limpiarVideo(){
-  if(hls){ hls.destroy(); hls = null; }
-  const v = $('#vid'); v.pause(); v.removeAttribute('src'); v.load();
-}
-function aviso(html, mostrar=true){ $('#aviso').innerHTML = html; $('#aviso').style.display = mostrar?'flex':'none'; }
-
-/* ---------- temas y canales ---------- */
-async function cargarTemas(){
-  pintarEstado('Pidiendo temas…');
-  const d = await api('/temas/' + encodeURIComponent(codigo) + '?tipo=' + tipoActual);
-  const barra = $('#temas'); barra.innerHTML = '';
-  d.temas.forEach((t,i) => {
-    const b = document.createElement('button');
-    b.className = 'chip' + (i === 0 ? ' on' : '');
-    b.textContent = t.name_topic;
-    b.onclick = () => {
-      [...barra.children].forEach(c => c.classList.remove('on'));
-      b.classList.add('on');
-      cargarCanales(t.id_topic, t.name_topic);
-    };
-    barra.appendChild(b);
-  });
-  if(d.temas.length){ cargarCanales(d.temas[0].id_topic, d.temas[0].name_topic); }
-  else pintarEstado('Ese código no tiene temas.');
-}
-
-async function cargarCanales(tema, nombre){
-  temaActual = tema;
-  pintarEstado('Cargando «' + nombre + '»…');
-  const d = await api('/canales/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(tema) + '?tipo=' + tipoActual);
-  const g = $('#canales'); g.innerHTML = '';
-  d.canales.forEach(c => {
-    const b = document.createElement('button');
-    b.className = 'tarj';
-    b.innerHTML = '<img loading="lazy" src="' + (c.img_url || '') + '" alt="">' +
-                  '<span>' + (c.name || c.id_live) + '</span>';
-    b.onclick = () => abrirCanal(c);
-    g.appendChild(b);
-  });
-  pintarEstado(d.total + ' canales en «' + nombre + '»');
-}
-
-/* ---------- canal: mostrar TODAS las opciones ---------- */
-async function abrirCanal(c){
-  canalAbierto = c;
-  $('#ver').classList.add('on');
-  $('#titulo').textContent = c.name || c.id_live;
-  $('#lista-ops').innerHTML = '';
-  aviso('<b>Buscando opciones…</b><span>Resolviendo todas las del canal.</span>');
-  limpiarVideo();
-  try{
-    const d = await api('/opciones/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(c.id_live));
-    opcionesActuales = d.opciones || []; intentosAuto = 0;
-    pintarOpciones(d);
-  }catch(e){
-    aviso('<b>No se pudo leer el canal</b><span>' + e.message + '</span>');
-  }
-}
-
-function pintarOpciones(d){
-  const cont = $('#lista-ops'); cont.innerHTML = '';
-  const h = document.createElement('h3');
-  h.textContent = d.total + ' opciones · ' + d.emitiendo + ' emitiendo ahora';
-  cont.appendChild(h);
-  if(!d.total){ aviso('<b>Canal sin opciones</b><span>El proveedor no devolvió ninguna fuente.</span>'); return; }
-
-  d.opciones.forEach((op, i) => {
-    const f = document.createElement('div'); f.className = 'fila';
-    const punto = '<span class="punto ' + (op.emite ? 'ok' : 'mal') + '"></span>';
-    const detalle = op.emite
-        ? (op.ms + ' ms')
-        : (op.error || 'sin respuesta');
-    f.innerHTML =
-      punto +
-      '<div class="info">' +
-        '<div class="t"><b>' + (i+1) + '.</b> ' + op.tipo + ' ' +
-          '<span class="etq">' + (op.mediatype || op.tipo) + '</span>' +
-          (op.repetida_en && op.repetida_en.length ? '<span class="etq">repite ' + op.repetida_en.join(', ') + '</span>' : '') +
-        '</div>' +
-        '<div class="u" title="' + (op.url || op.origen) + '">' + (op.url || op.origen) + '</div>' +
-        '<div class="u">' + detalle + '</div>' +
-      '</div>';
-    const b = document.createElement('button');
-    b.textContent = op.emite ? 'Ver' : 'Probar';
-    b.onclick = () => { [...cont.querySelectorAll('.fila')].forEach(x => x.classList.remove('act'));
-                        f.classList.add('act');
-                        [...cont.querySelectorAll('.fila button')].forEach(x => x.textContent = 'Probar');
-                        b.textContent = 'Viendo';
-                        reproducir(canalAbierto, i, op); };
-    f.appendChild(b);
-    cont.appendChild(f);
-  });
-
-  const primera = d.opciones.findIndex(o => o.emite);
-  if(primera >= 0){
-    // arranca sola con la primera que emite; la lista queda debajo por si quiere otra
-    aviso('<b>Conectando…</b>', true);
-    const fila = cont.querySelectorAll('.fila')[primera];
-    if(fila){ fila.classList.add('act'); }
-    setTimeout(() => reproducir(canalAbierto, primera, d.opciones[primera]), 150);
-  }else{
-    aviso('<b>Ninguna opción emite ahora</b><span>El proveedor las tiene caídas; vuelve a probar en un rato.</span>');
-  }
-}
-
-/* ---------- reproducir una opción concreta ---------- */
-let vigilante = null, opcionesActuales = [], intentosAuto = 0;
-
-function pararVigilante(){ if(vigilante){ clearTimeout(vigilante); vigilante = null; } }
-
-function marcarFila(indice, texto){
-  const filas = document.querySelectorAll('#lista-ops .fila');
-  filas.forEach((f, k) => {
-    f.classList.toggle('act', k === indice);
-    const bt = f.querySelector('button');
-    if(bt) bt.textContent = (k === indice) ? (texto || 'Viendo') : 'Probar';
-  });
-}
-
-function reproducir(canal, indice, op){
-  limpiarVideo();
-  pararVigilante();
-  marcarFila(indice, 'Conectando…');
-  const marco = document.querySelector('.marco');
-  let v = document.getElementById('vid');
-  // vídeo nuevo en cada intento: el anterior se queda con estados colgados
-  const nuevo = document.createElement('video');
-  nuevo.id = 'vid'; nuevo.controls = true; nuevo.playsInline = true;
-  nuevo.setAttribute('playsinline', '');
-  marco.replaceChild(nuevo, v);
-  v = nuevo;
-
-  const clave = (op && op.n !== undefined) ? op.n : indice;
-  const ruta = '/p/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(canal.id_live) + '/' + clave + '.m3u8';
-  const base = API_BASE + ruta;
-  const directa = op && op.hls === false;
-  aviso('<b>Conectando…</b>', true);
-
-  const conectar = () => {
-    if(directa){
-      v.src = op.url;
-      v.play().catch(()=>{});
-      aviso('', false);
-      return;
-    }
-    if(window.Hls && Hls.isSupported()){
-      hls = new Hls({ enableWorker:true, backBufferLength:90, manifestLoadingTimeOut:12000,
-                      manifestLoadingMaxRetry:2, levelLoadingTimeOut:12000, fragLoadingTimeOut:20000 });
-      hls.loadSource(base);
-      hls.attachMedia(v);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => { aviso('', false); v.play().catch(()=>{}); });
-      hls.on(Hls.Events.ERROR, (_, d) => { if(d.fatal){ fallo('no carga el manifiesto'); } });
-    }else if(v.canPlayType('application/vnd.apple.mpegurl')){
-      v.src = base; v.play().catch(()=>{}); aviso('', false);
-    }else{
-      aviso('<b>Navegador sin soporte HLS</b>');
-    }
-  };
-
-  const fallo = (motivo) => {
-    pararVigilante();
-    marcarFila(indice, 'Falló');
-    // si hay más opciones emitiendo, salta sola a la siguiente
-    const siguiente = opcionesActuales.findIndex((o, k) =>
-        k > indice && o.emite && o.n !== (op && op.n));
-    if(siguiente >= 0 && intentosAuto < 3){
-      intentosAuto++;
-      aviso('<b>Esa no cargó</b><span>Probando la siguiente…</span>');
-      setTimeout(() => reproducir(canal, siguiente, opcionesActuales[siguiente]), 600);
-      return;
-    }
-    aviso('<b>No se pudo abrir</b><span>' + motivo + '. Toca otra opción de la lista.</span>');
-  };
-
-  conectar();
-
-  // vigilante: si en 9 s no hay imagen, se considera fallo
-  vigilante = setTimeout(() => {
-    if(v.readyState < 2 && v.currentTime === 0) fallo('sin imagen tras 9 s');
-  }, 9000);
-
-  v.addEventListener('playing', () => { pararVigilante(); marcarFila(indice, 'Viendo'); aviso('', false); });
-  v.addEventListener('error', () => fallo('error del reproductor'));
-}
-
-/* ---------- arranque ---------- */
-$('#ir').onclick = () => {
-  codigo = ($('#cod').value || '').trim() || '232425';
-  cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
-};
-$('#volver').onclick = () => { $('#ver').classList.remove('on'); pararVigilante(); limpiarVideo(); };
-$('#rehacer').onclick = () => { if(canalAbierto) abrirCanal(canalAbierto); };
-$('#cod').addEventListener('keydown', e => { if(e.key === 'Enter') $('#ir').click(); });
-document.querySelectorAll('#modos .chip').forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll('#modos .chip').forEach(x => x.classList.remove('on'));
-    b.classList.add('on');
-    tipoActual = b.dataset.tipo;
-    cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
-  };
-});
-cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
+const $ = s => document.querySelector(s);
+let codigo='232425', tipoActual='tv', temaActual='', nombreTema='';
+let canalesTodos=[], opcionesActuales=[], opsMeta=null, indiceActual=-1, canalAbierto=null, hls=null, vigilante=null, intentosAuto=0;
+async function api(ruta){ const r=await fetch(API_BASE+ruta); if(!r.ok) throw new Error((await r.text()).slice(0,160)||('HTTP '+r.status)); return r.json(); }
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const host=u=>{try{return new URL(u).host}catch(e){return String(u||'').slice(0,60)}};
+function estado(t){$('#estado').textContent=t}
+function aviso(t,extra){$('#aviso').style.display=t?'flex':'none'; if(t)$('#aviso').innerHTML='<b>'+t+'</b>'+(extra?'<span>'+extra+'</span>':'')}
+function limpiarVideo(){if(hls){hls.destroy();hls=null} const v=$('#vid'); v.pause(); v.removeAttribute('src'); v.load()}
+async function cargarTemas(){estado('Cargando temas?'); const d=await api('/temas/'+encodeURIComponent(codigo)+'?tipo='+tipoActual); $('#codeLabel').textContent=codigo; $('#modoLabel').textContent=tipoActual.toUpperCase(); const bar=$('#temas'); bar.innerHTML=''; d.temas.forEach((t,i)=>{const b=document.createElement('button'); b.className='chip'+(i===0?' on':''); b.textContent=t.name_topic; b.onclick=()=>{[...bar.children].forEach(x=>x.classList.remove('on')); b.classList.add('on'); cargarCanales(t.id_topic,t.name_topic)}; bar.appendChild(b)}); if(d.temas.length) await cargarCanales(d.temas[0].id_topic,d.temas[0].name_topic); else {canalesTodos=[]; pintarCanales(); estado('Este c?digo no tiene temas.')}}
+async function cargarCanales(tema,nombre){temaActual=tema; nombreTema=nombre; estado('Cargando '+nombre+'?'); const d=await api('/canales/'+encodeURIComponent(codigo)+'/'+encodeURIComponent(tema)+'?tipo='+tipoActual); canalesTodos=d.canales||[]; $('#buscar').value=''; pintarCanales(); estado(d.total+' canales ? '+nombre)}
+function pintarCanales(){const q=($('#buscar').value||'').trim().toLowerCase(); const lista=q?canalesTodos.filter(c=>(c.name||c.id_live||'').toLowerCase().includes(q)):canalesTodos; const g=$('#canales'); g.innerHTML=''; if(!lista.length){g.innerHTML='<div class="vacio" style="grid-column:1/-1">No hay canales que coincidan.</div>'; return} lista.forEach((c,i)=>{const b=document.createElement('button'); b.className='tarj'; b.innerHTML='<div class="thumb"><img loading="lazy" src="'+esc(c.img_url)+'" alt=""><span class="num">'+String(i+1).padStart(2,'0')+'</span><span class="vivo">? DIRECTO</span><span class="play"></span></div><div class="nom">'+esc(c.name||c.id_live)+'</div>'; b.onclick=()=>abrirCanal(c); g.appendChild(b)})}
+async function abrirCanal(c){canalAbierto=c; $('#ver').classList.add('on'); $('#titulo').textContent=c.name||c.id_live; $('#subtitulo').textContent='Playlist '+codigo+' ? '+nombreTema+' ? resolviendo fuentes?'; $('#listaOps').innerHTML='<div class="vacio">Buscando servidores?</div>'; $('#resumenOps').textContent='Analizando?'; $('#estadoVideo').textContent='Sin conexi?n'; indiceActual=-1; limpiarVideo(); aviso('Buscando opciones?','Resolviendo todas las fuentes del canal.'); try{const d=await api('/opciones/'+encodeURIComponent(codigo)+'/'+encodeURIComponent(c.id_live)); opcionesActuales=d.opciones||[]; opsMeta=d; intentosAuto=0; $('#subtitulo').textContent='Playlist '+codigo+' ? '+nombreTema+' ? '+(d.canal&&d.canal.id_live||c.id_live); $('#resumenOps').textContent=d.total+' fuentes ? '+d.emitiendo+' emitiendo'; pintarOps(); const primera=opcionesActuales.findIndex(o=>o.emite); if(primera>=0){aviso('Conectando?'); setTimeout(()=>reproducir(primera),160)} else aviso('Ning?n servidor emite ahora','El proveedor tiene ca?das las fuentes; pulsa Re-probar en un rato.')}catch(e){aviso('No se pudo leer el canal',e.message); $('#resumenOps').textContent='Error'}}
+function pintarOps(){const box=$('#listaOps'); box.innerHTML=''; const solo=$('#soloEmite').checked; const vis=opcionesActuales.map((o,i)=>({o,i})).filter(x=>!solo||x.o.emite); if(!vis.length){box.innerHTML='<div class="vacio">No hay fuentes con este filtro.</div>'; return} vis.forEach(({o,i})=>{const d=document.createElement('div'); d.className='op'+(i===indiceActual?' act':''); d.dataset.i=i; const detalle=o.emite?(o.ms||0)+' ms'+(o.http?' ? HTTP '+o.http:''):(o.error||'sin respuesta'); d.innerHTML='<div class="n">'+(i+1)+'</div><div class="meta"><div class="linea"><span class="punto '+(o.emite?'ok':'mal')+'"></span><span class="tipo">'+esc(o.tipo||'fuente')+'</span>'+(o.hls?'<span class="etq hls">HLS</span>':'')+(o.mediatype?'<span class="etq">'+esc(o.mediatype)+'</span>':'')+(o.http?'<span class="etq http">'+o.http+'</span>':'')+'</div><div class="url" title="'+esc(o.url||o.origen)+'">'+esc(host(o.url||o.origen))+'</div><div class="det">'+esc(detalle)+'</div></div><div><button class="ver">'+(i===indiceActual?'Viendo':(o.emite?'Ver':'Probar'))+'</button> <button class="copiar" title="Copiar URL">?</button></div>'; d.querySelector('.ver').onclick=()=>{indiceActual=i; marcar(); reproducir(i)}; d.querySelector('.copiar').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(o.url||o.origen||'')}; box.appendChild(d)})}
+function marcar(){document.querySelectorAll('#listaOps .op').forEach(f=>{const i=Number(f.dataset.i), act=i===indiceActual; f.classList.toggle('act',act); const b=f.querySelector('.ver'); if(b)b.textContent=act?'Viendo':(opcionesActuales[i]&&opcionesActuales[i].emite?'Ver':'Probar')})}
+function pararVigilante(){if(vigilante){clearTimeout(vigilante);vigilante=null}}
+function reproducir(i){const op=opcionesActuales[i]; if(!op||!canalAbierto)return; pararVigilante(); limpiarVideo(); indiceActual=i; marcar(); const viejo=$('#vid'), nuevo=document.createElement('video'); nuevo.id='vid'; nuevo.controls=true; nuevo.playsInline=true; nuevo.setAttribute('playsinline',''); $('#marco').replaceChild(nuevo,viejo); const v=nuevo, clave=(op.n!==undefined?op.n:i); const proxy=API_BASE+'/p/'+encodeURIComponent(codigo)+'/'+encodeURIComponent(canalAbierto.id_live)+'/'+clave+'.m3u8'; const directa=op.hls===false&&/^https?:/.test(op.url||''); $('#estadoVideo').innerHTML='Conectando con <b>'+esc(host(op.url||op.origen))+'</b>?'; aviso('Conectando?'); const fallo=motivo=>{pararVigilante(); $('#estadoVideo').textContent='Fall?: '+motivo; if($('#autoSalto').checked&&intentosAuto<3){const sig=opcionesActuales.findIndex((o,k)=>k>i&&o.emite&&o.n!==op.n); if(sig>=0){intentosAuto++; aviso('Ese servidor fall?','Probando el siguiente?'); setTimeout(()=>reproducir(sig),650); return}} aviso('No se pudo abrir','Toca otro servidor de la lista o pulsa Re-probar.')}; const conectar=()=>{if(directa){v.src=op.url; v.play().catch(()=>{}); aviso(''); $('#estadoVideo').textContent='Reproduciendo (directo)'; return} if(window.Hls&&Hls.isSupported()){hls=new Hls({enableWorker:true,backBufferLength:90,manifestLoadingTimeOut:12000,manifestLoadingMaxRetry:2,levelLoadingTimeOut:12000,fragLoadingTimeOut:20000}); hls.loadSource(proxy); hls.attachMedia(v); hls.on(Hls.Events.MANIFEST_PARSED,()=>{aviso(''); v.play().catch(()=>{})}); hls.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal)fallo('manifiesto HLS')})}else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=proxy; v.play().catch(()=>{}); aviso('')}else fallo('navegador sin HLS')}; conectar(); vigilante=setTimeout(()=>{if(v.readyState<2&&v.currentTime===0)fallo('sin imagen tras 9 s')},9000); v.addEventListener('playing',()=>{pararVigilante(); $('#estadoVideo').textContent='EN DIRECTO ? '+host(op.url||op.origen); aviso('')}); v.addEventListener('error',()=>fallo('error del reproductor'))}
+$('#ir').onclick=()=>{codigo=($('#cod').value||'').trim()||'232425'; cargarTemas().catch(e=>estado('Error: '+e.message))}; $('#cod').addEventListener('keydown',e=>{if(e.key==='Enter')$('#ir').click()}); $('#buscar').addEventListener('input',pintarCanales); $('#soloEmite').addEventListener('change',pintarOps); $('#volver').onclick=()=>{$('#ver').classList.remove('on'); pararVigilante(); limpiarVideo()}; $('#rehacer').onclick=()=>{if(canalAbierto)abrirCanal(canalAbierto)}; document.querySelectorAll('#modos button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#modos button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); tipoActual=b.dataset.tipo; cargarTemas().catch(e=>estado('Error: '+e.message))}); cargarTemas().catch(e=>estado('Error: '+e.message));
 </script>
 </body>
 </html>

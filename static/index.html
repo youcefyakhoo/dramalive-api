@@ -97,10 +97,13 @@
 const $ = s => document.querySelector(s);
 let codigo = '232425', temaActual = null, tipoActual = 'tv';
 let hls = null, canalAbierto = null;
+/* Si la web se sirve desde otro dominio (ej. Cloudflare Pages), aquí se pone
+   la URL base de la API Python (sin barra final). Vacío = mismo origen. */
+const API_BASE = window.API_BASE || '';
 
 /* ---------- utilidades ---------- */
 async function api(ruta){
-  const r = await fetch(ruta);
+  const r = await fetch(API_BASE + ruta);
   if(!r.ok){ throw new Error((await r.text()).slice(0,160) || ('HTTP '+r.status)); }
   return r.json();
 }
@@ -238,7 +241,8 @@ function reproducir(canal, indice, op){
   v = nuevo;
 
   const clave = (op && op.n !== undefined) ? op.n : indice;
-  const base = '/p/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(canal.id_live) + '/' + clave + '.m3u8';
+  const ruta = '/p/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(canal.id_live) + '/' + clave + '.m3u8';
+  const base = API_BASE + ruta;
   const directa = op && op.hls === false;
   aviso('<b>Conectando…</b>', true);
 

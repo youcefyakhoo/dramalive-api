@@ -19,6 +19,7 @@ from typing import Any
 
 import requests
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import (FileResponse, PlainTextResponse, RedirectResponse,
                                Response, StreamingResponse)
 
@@ -28,6 +29,14 @@ app = FastAPI(
     title="Drama Live API",
     description="Playlists FG Code de Drama Live (tv + radio). Cadena: glt -> glbt -> glasbi -> glbr.",
     version="1.1.0",
+)
+
+# la web puede estar en otro dominio (ej. Cloudflare Pages) consumiendo esta API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 import os

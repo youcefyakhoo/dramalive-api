@@ -53,3 +53,13 @@ Docs interactivas: `http://localhost:8000/docs`
 - `{n}` es el número que da el proveedor, no la posición en la lista.
 - La ventana del directo rota cada pocos segundos: si un segmento caduca, el
   proxy vuelve a resolver y reintenta una vez.
+
+## Deploy en Render
+
+1. Render → *New +* → *Blueprint* → conecta este repo.
+2. `render.yaml` ya define: build `pip install -r requirements.txt`,
+   start `uvicorn server:app --host 0.0.0.0 --port $PORT`,
+   health check `/salud`.
+3. Abre la URL que Render te da (ej. `https://dramalive-api.onrender.com`).
+
+Mismo código FG (`232425` por defecto) en la barra de la web.

@@ -99,7 +99,7 @@ let codigo = '232425', temaActual = null, tipoActual = 'tv';
 let hls = null, canalAbierto = null;
 /* Si la web se sirve desde otro dominio (ej. Cloudflare Pages), aquí se pone
    la URL base de la API Python (sin barra final). Vacío = mismo origen. */
-const API_BASE = window.API_BASE || '';
+const API_BASE = window.API_BASE || 'https://dramalive-api-08th.onrender.com';
 
 /* ---------- utilidades ---------- */
 async function api(ruta){

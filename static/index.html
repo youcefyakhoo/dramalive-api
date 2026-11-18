@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Drama Live</title>
+<style>
+  :root{
+    --fondo:#0b1220; --panel:#131c2e; --panel2:#1a2540; --linea:#243252;
+    --texto:#e8eefc; --tenue:#8ea0c4; --ok:#22c55e; --mal:#ef4444; --acento:#4f8cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fondo);color:var(--texto);
+       font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  button{font:inherit;cursor:pointer;border:0}
+  .cab{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;
+       padding:10px 12px;background:#0e1729ee;backdrop-filter:blur(8px);
+       border-bottom:1px solid var(--linea)}
+  .cab h1{font-size:16px;margin:0;flex:1;font-weight:650}
+  .cab input{width:104px;padding:8px 10px;border-radius:9px;border:1px solid var(--linea);
+       background:var(--panel);color:var(--texto);font-size:14px}
+  .cab button{padding:8px 13px;border-radius:9px;background:var(--acento);color:#fff;font-weight:600}
+  .barra{display:flex;gap:7px;overflow-x:auto;padding:10px 12px;border-bottom:1px solid var(--linea);
+         scrollbar-width:none}
+  .barra::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;padding:7px 13px;border-radius:999px;background:var(--panel);
+        color:var(--tenue);border:1px solid var(--linea);font-size:13px}
+  .chip.on{background:var(--acento);color:#fff;border-color:var(--acento)}
+  .estado{padding:6px 12px;color:var(--tenue);font-size:13px}
+  .rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
+           gap:8px;padding:10px 12px 90px}
+  .tarj{display:flex;gap:9px;align-items:center;padding:8px;border-radius:11px;
+        background:var(--panel);border:1px solid var(--linea);text-align:left;color:var(--texto)}
+  .tarj:hover{border-color:var(--acento)}
+  .tarj img{width:38px;height:38px;border-radius:7px;object-fit:contain;background:#0d1526}
+  .tarj span{font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
+             -webkit-box-orient:vertical}
+  /* ---- reproductor ---- */
+  #ver{position:fixed;inset:0;background:var(--fondo);display:none;flex-direction:column;z-index:50}
+  #ver.on{display:flex}
+  .v-cab{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--linea)}
+  .v-cab button{background:var(--panel2);color:var(--texto);padding:7px 12px;border-radius:9px}
+  .v-cab h2{font-size:15px;margin:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .marco{position:relative;width:100%;background:#000;aspect-ratio:16/9}
+  .marco video{width:100%;height:100%;background:#000;display:block}
+  .aviso{position:absolute;inset:0;display:flex;flex-direction:column;gap:8px;
+         align-items:center;justify-content:center;color:#cbd6ec;font-size:14px;
+         background:#000000cc;text-align:center;padding:16px}
+  .aviso b{font-size:15px}
+  .ops{padding:10px 12px 30px;overflow:auto;flex:1}
+  .ops h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--tenue);margin:14px 0 7px}
+  .fila{display:flex;gap:9px;align-items:center;padding:9px;margin-bottom:7px;
+        border-radius:10px;background:var(--panel);border:1px solid var(--linea)}
+  .fila.act{border-color:var(--acento);background:#16233c}
+  .punto{width:9px;height:9px;border-radius:50%;flex:0 0 9px}
+  .ok{background:var(--ok)} .mal{background:var(--mal)}
+  .fila .info{flex:1;min-width:0}
+  .fila .t{font-size:13.5px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+  .fila .u{font-size:11.5px;color:var(--tenue);overflow:hidden;text-overflow:ellipsis;
+           white-space:nowrap;margin-top:2px}
+  .etq{font-size:10.5px;padding:1px 7px;border-radius:999px;background:var(--panel2);
+       color:var(--tenue);border:1px solid var(--linea);text-transform:uppercase;letter-spacing:.03em}
+  .fila button{padding:7px 12px;border-radius:8px;background:var(--acento);color:#fff;font-size:13px;font-weight:600}
+  .fila button:disabled{background:var(--panel2);color:var(--tenue);cursor:not-allowed}
+</style>
+</head>
+<body>
+
+<header class="cab">
+  <h1>Drama Live</h1>
+  <input id="cod" value="232425" inputmode="numeric" aria-label="código FG">
+  <button id="ir">Abrir</button>
+</header>
+<div class="barra" id="modos" style="border-bottom:0;padding-bottom:0">
+  <button class="chip on" data-tipo="tv">TV</button>
+  <button class="chip" data-tipo="radio">Radio</button>
+</div>
+<div class="barra" id="temas"></div>
+<div class="estado" id="estado">Escribe un código FG y pulsa Abrir.</div>
+<div class="rejilla" id="canales"></div>
+
+<section id="ver">
+  <div class="v-cab">
+    <button id="volver">← Volver</button>
+    <h2 id="titulo"></h2>
+    <button id="rehacer">Re-probar</button>
+  </div>
+  <div class="marco">
+    <video id="vid" controls playsinline></video>
+    <div class="aviso" id="aviso"><b>Elige una opción</b><span>Abajo están todas las de este canal.</span></div>
+  </div>
+  <div class="ops" id="lista-ops"></div>
+</section>
+
+<script src="/static/hls.min.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+let codigo = '232425', temaActual = null, tipoActual = 'tv';
+let hls = null, canalAbierto = null;
+
+/* ---------- utilidades ---------- */
+async function api(ruta){
+  const r = await fetch(ruta);
+  if(!r.ok){ throw new Error((await r.text()).slice(0,160) || ('HTTP '+r.status)); }
+  return r.json();
+}
+function pintarEstado(t){ $('#estado').textContent = t; }
+function limpiarVideo(){
+  if(hls){ hls.destroy(); hls = null; }
+  const v = $('#vid'); v.pause(); v.removeAttribute('src'); v.load();
+}
+function aviso(html, mostrar=true){ $('#aviso').innerHTML = html; $('#aviso').style.display = mostrar?'flex':'none'; }
+
+/* ---------- temas y canales ---------- */
+async function cargarTemas(){
+  pintarEstado('Pidiendo temas…');
+  const d = await api('/temas/' + encodeURIComponent(codigo) + '?tipo=' + tipoActual);
+  const barra = $('#temas'); barra.innerHTML = '';
+  d.temas.forEach((t,i) => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (i === 0 ? ' on' : '');
+    b.textContent = t.name_topic;
+    b.onclick = () => {
+      [...barra.children].forEach(c => c.classList.remove('on'));
+      b.classList.add('on');
+      cargarCanales(t.id_topic, t.name_topic);
+    };
+    barra.appendChild(b);
+  });
+  if(d.temas.length){ cargarCanales(d.temas[0].id_topic, d.temas[0].name_topic); }
+  else pintarEstado('Ese código no tiene temas.');
+}
+
+async function cargarCanales(tema, nombre){
+  temaActual = tema;
+  pintarEstado('Cargando «' + nombre + '»…');
+  const d = await api('/canales/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(tema) + '?tipo=' + tipoActual);
+  const g = $('#canales'); g.innerHTML = '';
+  d.canales.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'tarj';
+    b.innerHTML = '<img loading="lazy" src="' + (c.img_url || '') + '" alt="">' +
+                  '<span>' + (c.name || c.id_live) + '</span>';
+    b.onclick = () => abrirCanal(c);
+    g.appendChild(b);
+  });
+  pintarEstado(d.total + ' canales en «' + nombre + '»');
+}
+
+/* ---------- canal: mostrar TODAS las opciones ---------- */
+async function abrirCanal(c){
+  canalAbierto = c;
+  $('#ver').classList.add('on');
+  $('#titulo').textContent = c.name || c.id_live;
+  $('#lista-ops').innerHTML = '';
+  aviso('<b>Buscando opciones…</b><span>Resolviendo todas las del canal.</span>');
+  limpiarVideo();
+  try{
+    const d = await api('/opciones/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(c.id_live));
+    opcionesActuales = d.opciones || []; intentosAuto = 0;
+    pintarOpciones(d);
+  }catch(e){
+    aviso('<b>No se pudo leer el canal</b><span>' + e.message + '</span>');
+  }
+}
+
+function pintarOpciones(d){
+  const cont = $('#lista-ops'); cont.innerHTML = '';
+  const h = document.createElement('h3');
+  h.textContent = d.total + ' opciones · ' + d.emitiendo + ' emitiendo ahora';
+  cont.appendChild(h);
+  if(!d.total){ aviso('<b>Canal sin opciones</b><span>El proveedor no devolvió ninguna fuente.</span>'); return; }
+
+  d.opciones.forEach((op, i) => {
+    const f = document.createElement('div'); f.className = 'fila';
+    const punto = '<span class="punto ' + (op.emite ? 'ok' : 'mal') + '"></span>';
+    const detalle = op.emite
+        ? (op.ms + ' ms')
+        : (op.error || 'sin respuesta');
+    f.innerHTML =
+      punto +
+      '<div class="info">' +
+        '<div class="t"><b>' + (i+1) + '.</b> ' + op.tipo + ' ' +
+          '<span class="etq">' + (op.mediatype || op.tipo) + '</span>' +
+          (op.repetida_en && op.repetida_en.length ? '<span class="etq">repite ' + op.repetida_en.join(', ') + '</span>' : '') +
+        '</div>' +
+        '<div class="u" title="' + (op.url || op.origen) + '">' + (op.url || op.origen) + '</div>' +
+        '<div class="u">' + detalle + '</div>' +
+      '</div>';
+    const b = document.createElement('button');
+    b.textContent = op.emite ? 'Ver' : 'Probar';
+    b.onclick = () => { [...cont.querySelectorAll('.fila')].forEach(x => x.classList.remove('act'));
+                        f.classList.add('act');
+                        [...cont.querySelectorAll('.fila button')].forEach(x => x.textContent = 'Probar');
+                        b.textContent = 'Viendo';
+                        reproducir(canalAbierto, i, op); };
+    f.appendChild(b);
+    cont.appendChild(f);
+  });
+
+  const primera = d.opciones.findIndex(o => o.emite);
+  if(primera >= 0){
+    // arranca sola con la primera que emite; la lista queda debajo por si quiere otra
+    aviso('<b>Conectando…</b>', true);
+    const fila = cont.querySelectorAll('.fila')[primera];
+    if(fila){ fila.classList.add('act'); }
+    setTimeout(() => reproducir(canalAbierto, primera, d.opciones[primera]), 150);
+  }else{
+    aviso('<b>Ninguna opción emite ahora</b><span>El proveedor las tiene caídas; vuelve a probar en un rato.</span>');
+  }
+}
+
+/* ---------- reproducir una opción concreta ---------- */
+let vigilante = null, opcionesActuales = [], intentosAuto = 0;
+
+function pararVigilante(){ if(vigilante){ clearTimeout(vigilante); vigilante = null; } }
+
+function marcarFila(indice, texto){
+  const filas = document.querySelectorAll('#lista-ops .fila');
+  filas.forEach((f, k) => {
+    f.classList.toggle('act', k === indice);
+    const bt = f.querySelector('button');
+    if(bt) bt.textContent = (k === indice) ? (texto || 'Viendo') : 'Probar';
+  });
+}
+
+function reproducir(canal, indice, op){
+  limpiarVideo();
+  pararVigilante();
+  marcarFila(indice, 'Conectando…');
+  const marco = document.querySelector('.marco');
+  let v = document.getElementById('vid');
+  // vídeo nuevo en cada intento: el anterior se queda con estados colgados
+  const nuevo = document.createElement('video');
+  nuevo.id = 'vid'; nuevo.controls = true; nuevo.playsInline = true;
+  nuevo.setAttribute('playsinline', '');
+  marco.replaceChild(nuevo, v);
+  v = nuevo;
+
+  const clave = (op && op.n !== undefined) ? op.n : indice;
+  const base = '/p/' + encodeURIComponent(codigo) + '/' + encodeURIComponent(canal.id_live) + '/' + clave + '.m3u8';
+  const directa = op && op.hls === false;
+  aviso('<b>Conectando…</b>', true);
+
+  const conectar = () => {
+    if(directa){
+      v.src = op.url;
+      v.play().catch(()=>{});
+      aviso('', false);
+      return;
+    }
+    if(window.Hls && Hls.isSupported()){
+      hls = new Hls({ enableWorker:true, backBufferLength:90, manifestLoadingTimeOut:12000,
+                      manifestLoadingMaxRetry:2, levelLoadingTimeOut:12000, fragLoadingTimeOut:20000 });
+      hls.loadSource(base);
+      hls.attachMedia(v);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => { aviso('', false); v.play().catch(()=>{}); });
+      hls.on(Hls.Events.ERROR, (_, d) => { if(d.fatal){ fallo('no carga el manifiesto'); } });
+    }else if(v.canPlayType('application/vnd.apple.mpegurl')){
+      v.src = base; v.play().catch(()=>{}); aviso('', false);
+    }else{
+      aviso('<b>Navegador sin soporte HLS</b>');
+    }
+  };
+
+  const fallo = (motivo) => {
+    pararVigilante();
+    marcarFila(indice, 'Falló');
+    // si hay más opciones emitiendo, salta sola a la siguiente
+    const siguiente = opcionesActuales.findIndex((o, k) =>
+        k > indice && o.emite && o.n !== (op && op.n));
+    if(siguiente >= 0 && intentosAuto < 3){
+      intentosAuto++;
+      aviso('<b>Esa no cargó</b><span>Probando la siguiente…</span>');
+      setTimeout(() => reproducir(canal, siguiente, opcionesActuales[siguiente]), 600);
+      return;
+    }
+    aviso('<b>No se pudo abrir</b><span>' + motivo + '. Toca otra opción de la lista.</span>');
+  };
+
+  conectar();
+
+  // vigilante: si en 9 s no hay imagen, se considera fallo
+  vigilante = setTimeout(() => {
+    if(v.readyState < 2 && v.currentTime === 0) fallo('sin imagen tras 9 s');
+  }, 9000);
+
+  v.addEventListener('playing', () => { pararVigilante(); marcarFila(indice, 'Viendo'); aviso('', false); });
+  v.addEventListener('error', () => fallo('error del reproductor'));
+}
+
+/* ---------- arranque ---------- */
+$('#ir').onclick = () => {
+  codigo = ($('#cod').value || '').trim() || '232425';
+  cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
+};
+$('#volver').onclick = () => { $('#ver').classList.remove('on'); pararVigilante(); limpiarVideo(); };
+$('#rehacer').onclick = () => { if(canalAbierto) abrirCanal(canalAbierto); };
+$('#cod').addEventListener('keydown', e => { if(e.key === 'Enter') $('#ir').click(); });
+document.querySelectorAll('#modos .chip').forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll('#modos .chip').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    tipoActual = b.dataset.tipo;
+    cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
+  };
+});
+cargarTemas().catch(e => pintarEstado('Error: ' + e.message));
+</script>
+</body>
+</html>
